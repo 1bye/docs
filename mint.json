@@ -62,11 +62,17 @@
       "pages": ["api-reference/introduction"]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Flow Endpoints",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/endpoint/assigned/create",
+        "api-reference/endpoint/assigned/code"
+      ]
+    },
+    {
+      "group": "Assigned Flow Endpoints",
+      "pages": [
+        "api-reference/endpoint/assigned/create",
+        "api-reference/endpoint/assigned/code"
       ]
     }
   ],

@@ -1,0 +1,181 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Flow Executor API",
+    "version": "1.0.0",
+    "description": "API to execute flows."
+  },
+  "paths": {
+    "/execute": {
+      "post": {
+        "summary": "Execute a flow",
+        "description": "Submit a flow execution request with a payload that can be either FlowEdge or FlowSimple.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FlowEdge"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FlowSimple"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flow executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid payload"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FlowEdge": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "variables": {
+            "$ref": "#/components/schemas/FlowVariables"
+          },
+          "session": {
+            "$ref": "#/components/schemas/FlowSession"
+          },
+          "override": {
+            "$ref": "#/components/schemas/FlowOverride"
+          },
+          "config": {
+            "$ref": "#/components/schemas/FlowConfig"
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["uuid", "session"]
+      },
+      "FlowSimple": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "region": {
+            "type": "string"
+          },
+          "variables": {
+            "$ref": "#/components/schemas/FlowVariables"
+          },
+          "session": {
+            "$ref": "#/components/schemas/FlowSession"
+          },
+          "override": {
+            "$ref": "#/components/schemas/FlowOverride"
+          },
+          "config": {
+            "$ref": "#/components/schemas/FlowConfig"
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["uuid", "region", "session"]
+      },
+      "FlowVariables": {
+        "type": "object",
+        "additionalProperties": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "null" },
+            { "type": "array", "items": { "type": "string" } },
+            { "type": "object" }
+          ]
+        }
+      },
+      "FlowOverride": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "inputs": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "FlowConfig": {
+        "type": "object",
+        "properties": {
+          "realTimeLogging": {
+            "type": "boolean"
+          },
+          "caching": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FlowSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "globalId": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      }
+    }
+  }
+}
