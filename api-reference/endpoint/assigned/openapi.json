@@ -1,0 +1,250 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Nouro Flow API",
+    "version": "1.0.0",
+    "description": "API for creating and managing assigned flows in Nouro."
+  },
+  "servers": [
+    {
+      "url": "https://api.flow.nouro.app/v1"
+    }
+  ],
+  "paths": {
+    "/flow/assigned/create": {
+      "post": {
+        "summary": "Create an assigned flow",
+        "operationId": "createAssignedFlow",
+        "tags": ["Flow"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flow": {
+                    "oneOf": [
+                      { "$ref": "#/components/schemas/FlowEdge" },
+                      { "$ref": "#/components/schemas/FlowSimple" }
+                    ],
+                    "properties": {
+                      "variables": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/FlowVariables" }
+                      },
+                      "environmentalVariables": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/FlowEnvironmentalVariables" }
+                      },
+                      "includedCredentials": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "uuid" }
+                      },
+                      "credentials": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/FlowLocalCredentials" }
+                      }
+                    }
+                  },
+                  "limits": { "$ref": "#/components/schemas/FlowLimits" },
+                  "assign": { "$ref": "#/components/schemas/AssignType" }
+                },
+                "required": ["flow", "assign"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Assigned flow created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uuid": { "type": "string", "format": "uuid" },
+                    "password": { "type": "string" },
+                    "limits": { "$ref": "#/components/schemas/FlowLimits" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/flow/assigned/code": {
+      "post": {
+        "summary": "Obtain a code for the assigned flow",
+        "operationId": "obtainAssignedFlowCode",
+        "tags": ["Flow"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uuid": { "type": "string", "format": "uuid" }
+                },
+                "required": ["uuid"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string" },
+                    "expires_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FlowLimits": {
+        "type": "object",
+        "properties": {
+          "maxExecutions": {
+            "type": "integer",
+            "default": 1000
+          },
+          "maxBuilds": {
+            "type": "integer",
+            "default": 100
+          },
+          "maxVariables": {
+            "type": "integer",
+            "default": 20
+          },
+          "maxEnvironmentalVariables": {
+            "type": "integer",
+            "default": 10
+          }
+        }
+      },
+      "AssignType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["password", "code"]
+          },
+          "password": {
+            "type": "string",
+            "description": "Required if type is 'password'. Can be self-generated or server-generated."
+          }
+        },
+        "required": ["type"]
+      },
+      "FlowEdge": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["edge"] },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["type", "name"]
+      },
+      "FlowSimple": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["edge"] },
+          "name": { "type": "string" },
+          "region": { "type": "string" },
+          "description": { "type": "string" },
+          "memory": { "type": "integer", "default": 128, "maximum": 3000 },
+          "timeout": { "type": "integer", "default": 3, "maximum": 900 },
+          "storage": { "type": "integer", "default": 512, "maximum": 2048 }
+        },
+        "required": ["type", "name", "region"]
+      },
+      "FlowLocalCredentials": {
+        "type": "object",
+        "properties": {
+          "credential_id": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" }
+                },
+                "required": ["name"]
+              }
+            ]
+          },
+          "name": { "type": "string" },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "value": { "type": "string" }
+              },
+              "required": ["name", "value"]
+            }
+          }
+        },
+        "required": ["credential_id", "name", "inputs"]
+      },
+      "FlowEnvironmentalVariables": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "value": { "type": "string" }
+        },
+        "required": ["key", "value"]
+      },
+      "FlowVariables": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["string", "number", "boolean", "json"]
+          },
+          "value": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "object" }
+            ]
+          }
+        },
+        "required": ["name", "type", "value"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
