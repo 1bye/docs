@@ -64,8 +64,7 @@
     {
       "group": "Flow Endpoints",
       "pages": [
-        "api-reference/endpoint/assigned/create",
-        "api-reference/endpoint/assigned/code"
+        "api-reference/endpoint/flow/execute"
       ]
     },
     {
@@ -73,6 +72,12 @@
       "pages": [
         "api-reference/endpoint/assigned/create",
         "api-reference/endpoint/assigned/code"
+      ]
+    },
+    {
+      "group": "Public flow",
+      "pages": [
+        "api-reference/endpoint/public-url/execute"
       ]
     }
   ],
