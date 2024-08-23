@@ -79,6 +79,13 @@
       "pages": [
         "api-reference/endpoint/public-url/execute"
       ]
+    },
+    {
+      "group": "Flow",
+      "pages": [
+        "api-reference/endpoint/assigned/flow/create-an-assigned-flow",
+        "api-reference/endpoint/assigned/flow/obtain-a-code-for-the-assigned-flow"
+      ]
     }
   ],
   "footerSocials": {
