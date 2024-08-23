@@ -5,6 +5,11 @@
     "version": "1.0.0",
     "description": "API to execute flows."
   },
+  "servers": [
+    {
+      "url": "https://executor.flow.nouro.services"
+    }
+  ],
   "paths": {
     "/execute": {
       "post": {
@@ -130,7 +135,6 @@
         "additionalProperties": {
           "oneOf": [
             { "type": "string" },
-            { "type": "null" },
             { "type": "array", "items": { "type": "string" } },
             { "type": "object" }
           ]
